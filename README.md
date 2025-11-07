@@ -67,9 +67,28 @@ sudo apt-get install poppler-utils
 
 1. Clone or download this repository
 
-2. Install Python dependencies:
+2. Create and activate a virtual environment (recommended):
+
+**macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+3. Install Python dependencies:
 ```bash
 pip install -r requirements.txt
+```
+
+To deactivate the virtual environment when done:
+```bash
+deactivate
 ```
 
 ## Usage
