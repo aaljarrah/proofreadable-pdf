@@ -4,7 +4,8 @@ Arabic PDF Proofreading Chunker
 ================================
 
 Processes large mixed Arabic PDFs (text + scanned pages), applies OCR where needed,
-and splits content into ChatGPT-ready markdown chunks for proofreading.
+and splits content into ChatGPT-ready markdown chunks for proofreading review.
+ChatGPT identifies issues and provides summaries while you make the actual corrections.
 """
 
 import argparse
@@ -244,15 +245,17 @@ CHUNK_ID: {chunk_index + 1:03d}
 PAGES: {start_page}-{end_page}
 
 ### INSTRUCTIONS_FOR_CHATGPT
-Proofread the following Arabic text:
-- Correct spelling, grammar, punctuation, hamza, and spacing.
-- Preserve the exact meaning and tone.
-- Preserve headings, bullet points, numbering, and formatting as much as possible.
-- Do NOT summarize, shorten, or remove content.
-- Do NOT add explanations inside the text.
-- Return:
-  1. The fully corrected text only.
-  2. A short bullet list of recurring issues you fixed (in Arabic).
+Review the following Arabic text for proofreading purposes:
+- Identify any major spelling, grammar, punctuation, hamza, or spacing errors.
+- Note any inconsistencies in formatting or structure.
+- Do NOT correct the text directly - I want to make the corrections myself.
+- Focus on issues that affect readability or meaning.
+
+Please provide:
+1. A summary of the overall quality (good/needs attention/needs significant work).
+2. A list of the most common or significant issues you found (with page numbers if possible).
+3. Any specific sections that need particular attention.
+4. Suggested areas to focus on when proofreading.
 
 ### TEXT
 {combined_text}"""
@@ -331,12 +334,12 @@ Proofread the following Arabic text:
 def main():
     """Main entry point for the script."""
     parser = argparse.ArgumentParser(
-        description="Process large Arabic PDFs and create ChatGPT-ready chunks for proofreading.",
+        description="Process large Arabic PDFs and create ChatGPT-ready chunks for proofreading review. ChatGPT identifies issues while you make corrections.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   %(prog)s input/document.pdf
-  %(prog)s input/document.pdf --max-words 5000 --max-pages 15
+  %(prog)s input/document.pdf --max-words 8000 --max-pages 30  # For GPT-3.5
   %(prog)s input/document.pdf --ocr-lang ara
         """
     )
@@ -349,15 +352,15 @@ Examples:
     parser.add_argument(
         '--max-words',
         type=int,
-        default=3500,
-        help="Maximum words per chunk (default: 3500)"
+        default=25000,
+        help="Maximum words per chunk (default: 25000)"
     )
     
     parser.add_argument(
         '--max-pages',
         type=int,
-        default=10,
-        help="Maximum pages per chunk (default: 10)"
+        default=80,
+        help="Maximum pages per chunk (default: 80)"
     )
     
     parser.add_argument(

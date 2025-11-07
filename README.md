@@ -1,6 +1,6 @@
 # Arabic PDF Proofreading Chunker
 
-A Python utility that intelligently processes large Arabic PDFs (mixed text and scanned pages), applies OCR where needed, and splits content into manageable chunks formatted for ChatGPT proofreading.
+A Python utility that intelligently processes large Arabic PDFs (mixed text and scanned pages), applies OCR where needed, and splits content into manageable chunks formatted for ChatGPT-assisted proofreading review.
 
 ## Features
 
@@ -122,8 +122,8 @@ python prepare_proofread_chunks.py input/document.pdf --max-words 4000 --max-pag
 | Option | Description | Default |
 |--------|-------------|---------|
 | `pdf_path` | Path to input PDF file (required) | - |
-| `--max-words` | Maximum words per chunk | 3500 |
-| `--max-pages` | Maximum pages per chunk | 10 |
+| `--max-words` | Maximum words per chunk | 25000 |
+| `--max-pages` | Maximum pages per chunk | 80 |
 | `--ocr-lang` | Tesseract language code(s) | ara+eng |
 
 ## Output Structure
@@ -135,8 +135,8 @@ project/
 ├── input/              # Place your PDF files here
 ├── output/
 │   └── chunks/        # Generated markdown chunks
-│       ├── chunk_001_p001-p010.md
-│       ├── chunk_002_p011-p020.md
+│       ├── chunk_001_p001-p080.md
+│       ├── chunk_002_p081-p160.md
 │       └── ...
 ├── logs/
 │   └── page_sources.txt  # Log of TEXT vs OCR for each page
@@ -154,13 +154,20 @@ Example:
 ```markdown
 ### CHUNK_META
 CHUNK_ID: 001
-PAGES: 1-10
+PAGES: 1-80
 
 ### INSTRUCTIONS_FOR_CHATGPT
-Proofread the following Arabic text:
-- Correct spelling, grammar, punctuation, hamza, and spacing.
-- Preserve the exact meaning and tone.
-...
+Review the following Arabic text for proofreading purposes:
+- Identify any major spelling, grammar, punctuation, hamza, or spacing errors.
+- Note any inconsistencies in formatting or structure.
+- Do NOT correct the text directly - I want to make the corrections myself.
+- Focus on issues that affect readability or meaning.
+
+Please provide:
+1. A summary of the overall quality (good/needs attention/needs significant work).
+2. A list of the most common or significant issues you found (with page numbers if possible).
+3. Any specific sections that need particular attention.
+4. Suggested areas to focus on when proofreading.
 
 ### TEXT
 ---- [Page 1] ----
@@ -176,8 +183,9 @@ Proofread the following Arabic text:
 1. **Run the script** on your PDF
 2. **Review the logs** to see which pages used OCR
 3. **Open chunk files** from `output/chunks/`
-4. **Copy-paste** each chunk into ChatGPT for proofreading
-5. **Collect** the proofread results
+4. **Copy-paste** each chunk into ChatGPT to get issue identification and quality assessment
+5. **Review ChatGPT's feedback** on problem areas
+6. **Proofread the original PDF yourself**, focusing on the areas ChatGPT highlighted
 
 ## Troubleshooting
 
@@ -213,10 +221,11 @@ Proofread the following Arabic text:
 ## Tips
 
 1. **Test first**: Run on a small PDF to verify everything works
-2. **Check logs**: Review `logs/page_sources.txt` to see OCR usage
-3. **Adjust limits**: Tune `--max-words` and `--max-pages` based on your needs
-4. **Arabic support**: Ensure your text editor/viewer supports RTL text
-5. **Backup**: Keep original PDFs safe before processing
+2. **Use GPT-4**: The default settings (25,000 words per chunk) are optimized for GPT-4's context window. For GPT-3.5, use `--max-words 8000` instead
+3. **Check logs**: Review `logs/page_sources.txt` to see OCR usage
+4. **Adjust limits**: Tune `--max-words` and `--max-pages` based on your needs and AI model
+5. **Arabic support**: Ensure your text editor/viewer supports RTL text
+6. **Backup**: Keep original PDFs safe before processing
 
 ## License
 
